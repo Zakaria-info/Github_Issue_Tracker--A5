@@ -33,100 +33,91 @@
     <link rel="stylesheet" href="styles/styles.css" />
   </head>
   <body class="bg-gray-200 min-h-screen flex items-center justify-center">
+    <!-- LOGIN CONTAINER -->
+    <div class="bg-white w-[520px] h-[743px] rounded-xl shadow-lg pt-10">
+      <!-- Logo -->
+      <img src="./assets/github-logo.png" class="w-[100px] h-[100px] mx-auto" />
 
-  <!-- LOGIN CONTAINER -->
-  <div class="bg-white w-[520px] h-[743px] rounded-xl shadow-lg pt-10">
+      <!-- Title + Subtitle -->
+      <div class="w-[456px] mx-auto text-center mt-6 space-y-6">
+        <h2 class="text-2xl font-bold text-gray-800">GitHub Issues Tracker</h2>
 
-    <!-- Logo -->
-    <img 
-      src="./assets/github-logo.png"
-      class="w-[100px] h-[100px] mx-auto"
-    >
+        <p class="text-gray-500">Sign in to manage your issues</p>
+      </div>
 
-    <!-- Title + Subtitle -->
-    <div class="w-[456px] mx-auto text-center mt-6 space-y-6">
+      <div class="w-[456px] mx-auto mt-8">
+        <!-- FORM START -->
+        <form id="login-form">
+          <!-- Username -->
+          <div class="form-control space-y-2">
+            <label class="label p-0">
+              <span class="text-gray-700">Username</span>
+            </label>
 
-      <h2 class="text-2xl font-bold text-gray-800">
-        GitHub Issues Tracker
-      </h2>
+            <input
+              id="input-username"
+              type="text"
+              placeholder="Enter Username"
+              autocomplete="username"
+              class="input input-bordered w-full"
+            />
+            <p class="text-sm text-blue-600">Default: admin</p>
+          </div>
 
-      <p class="text-gray-500">
-        Sign in to manage your issues
-      </p>
+          <!-- gap 16px -->
+          <div class="h-4"></div>
 
+          <!-- Password -->
+          <div class="form-control space-y-2">
+            <label class="label p-0">
+              <span class="text-gray-700">Password</span>
+            </label>
+
+            <input
+              id="input-password"
+              type="password"
+              placeholder="Enter Password"
+              autocomplete="current-password"
+              class="input input-bordered w-full"
+            />
+
+            <p class="text-sm text-blue-600">Default: admin123</p>
+          </div>
+
+          <!-- SIGN IN BUTTON -->
+          <button
+            id="login-btn"
+            type="submit"
+            class="w-full mt-6 text-white py-3 rounded-lg font-medium"
+            style="background: #4a00ff"
+          >
+            Sign In
+          </button>
+        </form>
+        <!-- FORM END -->
+
+        <!-- OR Divider -->
+        <div class="flex items-center w-full my-8">
+          <div class="flex-grow h-[1px] bg-gray-300"></div>
+          <span class="px-4 text-gray-500 text-sm">OR</span>
+          <div class="flex-grow h-[1px] bg-gray-300"></div>
+        </div>
+
+        <!-- Demo Credentials -->
+        <p class="text-center text-gray-400 text-sm mb-3">Demo Credentials:</p>
+
+        <div class="bg-gray-100 rounded-lg p-5 text-center">
+          <p class="font-semibold">
+            Username: <span class="font-normal">admin</span>
+          </p>
+
+          <p class="font-semibold">
+            Password: <span class="font-normal">admin123</span>
+          </p>
+        </div>
+      </div>
     </div>
 
-    <!-- FORM -->
-    <div class="w-[456px] mx-auto mt-8">
-
-      <!-- Username -->
-      <div class="space-y-2">
-        <label class="label p-0">
-          <span class="text-gray-700">Username</span>
-        </label>
-
-        <input 
-          type="text"
-          placeholder="Enter Username"
-          class="input input-bordered w-full"
-        >
-
-        <p class="text-sm text-blue-600">
-          Default: admin
-        </p>
-      </div>
-
-      <!-- gap 16px -->
-      <div class="h-4"></div>
-
-      <!-- Password -->
-      <div class="space-y-2">
-        <label class="label p-0">
-          <span class="text-gray-700">Password</span>
-        </label>
-
-        <input 
-          type="password"
-          placeholder="Enter Password"
-          class="input input-bordered w-full"
-        >
-
-        <p class="text-sm text-blue-600">
-          Default: admin123
-        </p>
-      </div>
-
-      <!-- SIGN IN BUTTON -->
-      <button class="w-full mt-6 text-white py-3 rounded-lg font-medium"
-        style="background:#4A00FF;">
-        Sign In
-      </button>
-
-      <!-- OR Divider -->
-      <div class="flex items-center w-full my-8">
-        <div class="flex-grow h-[1px] bg-gray-300"></div>
-        <span class="px-4 text-gray-500 text-sm">OR</span>
-        <div class="flex-grow h-[1px] bg-gray-300"></div>
-      </div>
-
-      <!-- Demo Credentials -->
-      <p class="text-center text-gray-400 text-sm mb-3">
-        Demo Credentials:
-      </p>
-
-      <div class="bg-gray-100 rounded-lg p-5 text-center">
-        <p class="font-semibold">
-          Username: <span class="font-normal">admin</span>
-        </p>
-
-        <p class="font-semibold">
-          Password: <span class="font-normal">admin123</span>
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-
-</body>
+    <script src="./script/login.js"></script>
+  </body>
 </html>
