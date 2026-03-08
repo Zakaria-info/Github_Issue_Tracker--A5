@@ -28,7 +28,7 @@
       href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
       rel="stylesheet"
     />
-     <!-- stylesheet -->
+    <!-- stylesheet -->
     <link rel="stylesheet" href="styles/styles.css" />
   </head>
   <body>
@@ -47,18 +47,91 @@
       </div>
       <div class="navbar-end gap-4">
         <div class="relative w-full max-w-xs">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-          <i class="fas fa-search"></i> </span>
-        <input 
-          type="text" 
-          placeholder="Search issues..." 
-          class="input input-bordered w-full pl-10 focus:outline-none focus:border-[#4A00FF]" 
-        />
-      </div>
+          <span
+            class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"
+          >
+            <i class="fas fa-search"></i>
+          </span>
+          <input
+            type="text"
+            placeholder="Search issues..."
+            class="input input-bordered w-full pl-10 focus:outline-none focus:border-[#4A00FF]"
+          />
+        </div>
         <button class="btn btn-primary bg-[#4A00FF] text-white">
           <i class="fas fa-plus mr-2"></i> New Issue
         </button>
       </div>
     </div>
+
+    <section>
+      <div class="max-w-7xl mx-auto space-y-4">
+        <!-- TAB BUTTONS: All, Open, Closed -->
+        <div class="bg-white rounded-xl p-3 flex gap-2 shadow-sm">
+          <button
+            id="tab-all"
+            class="btn btn-sm btn-primary"
+            onclick="switchTab('all')"
+          >
+            All
+          </button>
+          <button
+            id="tab-open"
+            class="btn btn-sm btn-outline"
+            onclick="switchTab('open')"
+          >
+            Open
+          </button>
+          <button
+            id="tab-closed"
+            class="btn btn-sm btn-outline"
+            onclick="switchTab('closed')"
+          >
+            Closed
+          </button>
+        </div>
+
+        <!-- HEADER: issue count + open/closed legend -->
+        <div
+          class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm flex-wrap gap-3"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="bg-violet-100 text-violet-600 w-11 h-11 rounded-full flex items-center justify-center"
+            >
+              <img src="./assets/Aperture.png" alt="" />
+            </div>
+            <div>
+              <p class="text-lg font-bold" id="issue-count">0 Issues</p>
+              <p class="text-sm text-gray-400">
+                Track and manage your project issues
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-4 text-sm font-medium">
+            <span class="flex items-center gap-1">
+              <i class="fa-solid fa-circle text-green-500 text-xs"></i> Open
+            </span>
+            <span class="flex items-center gap-1">
+              <i class="fa-solid fa-circle text-purple-500 text-xs"></i> Closed
+            </span>
+          </div>
+        </div>
+
+        <!-- LOADING SPINNER: shown while data is being fetched -->
+        <div id="spinner" class="flex justify-center py-20">
+          <span class="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+
+        <!-- CARDS GRID: issue cards appear here -->
+        <!-- hidden at first, JS shows it after data loads -->
+        <div
+          id="cards-grid"
+          class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+        ></div>
+      </div>
+      
+    </section>
+    <script src="./script/index.js"></script>
   </body>
 </html>
