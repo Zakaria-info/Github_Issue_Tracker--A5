@@ -131,6 +131,61 @@
         ></div>
       </div>
       
+
+      <!-- MODAL: pops up when user clicks a card -->
+      <dialog id="issue-modal" class="modal">
+        <div class="modal-box max-w-lg">
+          <!-- Title -->
+          <h3 class="text-lg font-bold mb-2" id="modal-title"></h3>
+
+          <!-- Status + author + date -->
+          <div
+            class="flex flex-wrap items-center gap-2 text-sm text-gray-400 mb-4"
+          >
+            <span
+              id="modal-status"
+              class="badge text-white font-semibold"
+            ></span>
+            <span>•</span>
+            <span id="modal-author"></span>
+            <span>•</span>
+            <span id="modal-date"></span>
+          </div>
+
+          <!-- Label badges -->
+          <div id="modal-labels" class="flex flex-wrap gap-2 mb-4"></div>
+
+          <!-- Description -->
+          <p
+            id="modal-desc"
+            class="text-sm text-gray-600 leading-relaxed mb-5"
+          ></p>
+
+          <!-- Assignee + Priority box -->
+          <div class="bg-gray-50 rounded-xl p-4 flex gap-10 flex-wrap mb-5">
+            <div>
+              <p class="text-xs text-gray-400 mb-1">Assignee:</p>
+              <p id="modal-assignee" class="font-bold text-sm"></p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 mb-1">Priority:</p>
+              <div id="modal-priority"></div>
+            </div>
+          </div>
+
+          <!-- Close button -->
+          <div class="flex justify-end">
+            <button class="btn btn-primary" onclick="closeModal()">
+              Close
+            </button>
+          </div>
+        </div>
+
+        <!-- click outside modal to close -->
+        <form method="dialog" class="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </section>
     <script src="./script/index.js"></script>
   </body>

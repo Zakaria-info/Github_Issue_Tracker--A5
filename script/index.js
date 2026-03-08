@@ -15,7 +15,22 @@ function formatDate(dateString) {
 }
 
 
+// =============================================
+//  SHOW the loading spinner, HIDE the cards
+// =============================================
+function showSpinner() {
+  document.getElementById("spinner").style.display = "flex";
+  document.getElementById("cards-grid").style.display = "none";
+}
 
+
+// =============================================
+//  HIDE the loading spinner, SHOW the cards
+// =============================================
+function hideSpinner() {
+  document.getElementById("spinner").style.display = "none";
+  document.getElementById("cards-grid").style.display = "grid";
+}
 
 
 //  SHOW the loading spinner, HIDE the cards
@@ -67,24 +82,21 @@ function createCard(issue) {
   card.innerHTML = `
     <div class="p-4 flex flex-col gap-3 flex-1">
 
-      <!-- Status icon + Priority badge -->
       <div class="flex items-center justify-between">
         ${statusIcon}
         ${getPriorityBadge(prio)}
       </div>
 
-      <!-- Title -->
       <p class="font-bold text-sm text-gray-800 leading-snug">${title}</p>
 
-      <!-- Description (only 2 lines shown) -->
       <p class="text-xs text-gray-400 leading-relaxed line-clamp-2">${desc}</p>
 
-      <!-- Label badges -->
+
       <div class="flex flex-wrap gap-1">${labelsHTML}</div>
 
     </div>
 
-    <!-- Footer -->
+   
     <div class="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
       <p>#${id} by <span class="font-semibold text-gray-700">${author}</span></p>
       <p>${date}</p>
