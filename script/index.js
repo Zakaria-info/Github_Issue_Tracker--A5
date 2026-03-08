@@ -13,20 +13,50 @@ function formatDate(dateString) {
   const d = new Date(dateString);
   return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 }
+//  Get a colored priority badge
+function getPriorityBadge(priority) {
+  const p = (priority || "LOW").toUpperCase();
+
+  if (p === "HIGH")   return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
+  if (p === "MEDIUM") return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
+                      return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
+}
+
+//   Get a colored label badge (BUG, HELP WANTED etc.)
+//  Returns HTML string
+
+function getLabelBadge(name) {
+  const labelName = typeof name === "string" ? name : (name.name || "");
+  const l = labelName.toLowerCase();
+
+  let colorClass = "badge-ghost";
+  let icon = "fa-tag";
+
+  if (l.includes("bug"))   { colorClass = "badge-error";   icon = "fa-bug"; }
+  if (l.includes("help"))  { colorClass = "badge-warning";  icon = "fa-hand"; }
+  if (l.includes("enhan")) { colorClass = "badge-success";  icon = "fa-star"; }
+  if (l.includes("feat"))  { colorClass = "badge-info";     icon = "fa-rocket"; }
+
+  return `
+    <span class="badge ${colorClass} text-xs font-semibold gap-1">
+      <i class="fa-solid ${icon} text-[9px]"></i>
+      ${labelName.toUpperCase()}
+    </span>
+  `;
+}
 
 
-// =============================================
+
 //  SHOW the loading spinner, HIDE the cards
-// =============================================
+
 function showSpinner() {
   document.getElementById("spinner").style.display = "flex";
   document.getElementById("cards-grid").style.display = "none";
 }
 
 
-// =============================================
 //  HIDE the loading spinner, SHOW the cards
-// =============================================
+
 function hideSpinner() {
   document.getElementById("spinner").style.display = "none";
   document.getElementById("cards-grid").style.display = "grid";
