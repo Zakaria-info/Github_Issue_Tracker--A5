@@ -4,22 +4,28 @@ let allIssues = [];
 // --- Track which tab is active ---
 let currentTab = "all";
 
-// Turn a date string into a readable date
+//  HELPER: Turn a date string into a readable date
 
 function formatDate(dateString) {
   if (!dateString) return "N/A";
   const d = new Date(dateString);
   return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 }
-//  Get a colored priority badge
+
+//  HELPER: Get a colored priority badge
+//  Returns HTML string based on priority level
+
 function getPriorityBadge(priority) {
   const p = (priority || "LOW").toUpperCase();
+
   if (p === "HIGH")   return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
   if (p === "MEDIUM") return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
                       return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
 }
 
-//   Get a colored label badge (BUG, HELP WANTED etc.)
+
+
+//  HELPER: Get a colored label badge (BUG, HELP WANTED etc.)
 //  Returns HTML string
 
 function getLabelBadge(name) {
@@ -29,9 +35,9 @@ function getLabelBadge(name) {
   let colorClass = "badge-ghost";
   let icon = "fa-tag";
 
-  if (l.includes("bug"))   { colorClass = "badge-error";   icon = "fa-bug"; }
-  if (l.includes("help"))  { colorClass = "badge-warning";  icon = "fa-hand"; }
-  if (l.includes("enhan")) { colorClass = "badge-success";  icon = "fa-star"; }
+  if (l.includes("bug"))   { colorClass = "badge-error bg-[#FECACA] text-[#EF4444]";   icon = "fa-bug"; }
+  if (l.includes("help"))  { colorClass = "badge-warning bg-[#FDE68A] text-[#D97706]";  icon = "fa-hand"; }
+  if (l.includes("enhan")) { colorClass = "badge-success bg-[#BBF7D0] text-[#00A96E]";  icon = "fa-star"; }
   if (l.includes("feat"))  { colorClass = "badge-info";     icon = "fa-rocket"; }
 
   return `
@@ -42,13 +48,14 @@ function getLabelBadge(name) {
   `;
 }
 
+
+
 //  SHOW the loading spinner, HIDE the cards
 
 function showSpinner() {
   document.getElementById("spinner").style.display = "flex";
   document.getElementById("cards-grid").style.display = "none";
 }
-
 
 //  HIDE the loading spinner, SHOW the cards
 
@@ -61,31 +68,28 @@ function hideSpinner() {
 //  CREATE ONE CARD for a single issue
 //  Returns a <div> element
 function createCard(issue) {
-  // Get values from the issue
-  const id = issue.id;
-  const title = issue.title;
-  const desc = issue.description;
+  const id     = issue.id    || issue._id || "?";
+  const title  = issue.title || "Untitled";
+  const desc   = issue.description || "No description.";
   const status = (issue.status || "open").toLowerCase();
-  const prio = issue.priority || "LOW";
+  const prio   = issue.priority || "LOW";
   const author = issue.author || issue.createdBy || "Unknown";
-  const date = formatDate(issue.createdAt);
+  const date   = formatDate(issue.createdAt);
   const labels = issue.labels || [];
 
   // Build label badges HTML
   let labelsHTML = "";
-  labels.forEach(function (lbl) {
+  labels.forEach(function(lbl) {
     labelsHTML += getLabelBadge(lbl);
   });
 
   // Top border color: green for open, purple for closed
-  const borderColor =
-    status === "open" ? "border-t-green-500" : "border-t-purple-500";
+  const borderColor = status === "open" ? "border-t-green-500" : "border-t-purple-500";
 
   // Status icon
-  const statusIcon =
-    status === "open"
-      ? `<i class="fa-solid fa-circle-dot text-green-500"></i>`
-      : `<i class="fa-solid fa-circle-check text-purple-500"></i>`;
+  const statusIcon = status === "open"
+    ? `<i class="fa-solid fa-circle-dot text-green-500"></i>`
+    : `<i class="fa-solid fa-circle-check text-purple-500"></i>`;
 
   // Create the card element
   const card = document.createElement("div");
@@ -94,29 +98,32 @@ function createCard(issue) {
   card.innerHTML = `
     <div class="p-4 flex flex-col gap-3 flex-1">
 
+      <!-- Status icon + Priority badge -->
       <div class="flex items-center justify-between">
         ${statusIcon}
         ${getPriorityBadge(prio)}
       </div>
 
+      <!-- Title -->
       <p class="font-bold text-sm text-gray-800 leading-snug">${title}</p>
 
+      <!-- Description (only 2 lines shown) -->
       <p class="text-xs text-gray-400 leading-relaxed line-clamp-2">${desc}</p>
 
-
+      <!-- Label badges -->
       <div class="flex flex-wrap gap-1">${labelsHTML}</div>
 
     </div>
 
-   
+    <!-- Footer -->
     <div class="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
       <p>#${id} by <span class="font-semibold text-gray-700">${author}</span></p>
       <p>${date}</p>
     </div>
   `;
 
-  // When card is clicked → open the modal
-  card.addEventListener("click", function () {
+  // When card is clicked , open the modal
+  card.addEventListener("click", function() {
     openModal(issue);
   });
 
@@ -220,7 +227,7 @@ function openModal(issue) {
   document.getElementById("issue-modal").showModal();
 
   // Also fetch full details from the API
-  const id = issue.id;
+  const id = issue.id || issue._id;
   if (id) fetchSingleIssue(id);
 }
 
@@ -231,12 +238,13 @@ function closeModal() {
   document.getElementById("issue-modal").close();
 }
 
+
 //  FILL THE MODAL with issue data
 
 function fillModal(issue) {
   const status   = (issue.status || "open").toLowerCase();
-  const title    = issue.title;
-  const desc     = issue.description;
+  const title    = issue.title || "Untitled";
+  const desc     = issue.description || "No description.";
   const author   = issue.author || issue.createdBy || "Unknown";
   const assignee = issue.assignee || author;
   const priority = issue.priority || "LOW";
@@ -276,3 +284,29 @@ function fillModal(issue) {
   // Priority
   document.getElementById("modal-priority").innerHTML = getPriorityBadge(priority);
 }
+
+
+//  TAB SWITCHING
+//  Changes active tab style and re-filters cards
+
+function switchTab(tab) {
+  currentTab = tab;
+
+  // Reset all tab buttons to outline style
+  document.getElementById("tab-all").className    = "btn btn-sm btn-outline";
+  document.getElementById("tab-open").className   = "btn btn-sm btn-outline";
+  document.getElementById("tab-closed").className = "btn btn-sm btn-outline";
+
+  // Make the clicked tab active (filled/primary)
+  document.getElementById("tab-" + tab).className = "btn btn-sm btn-primary";
+
+  // Re-render the cards with the new filter
+  displayIssues(allIssues);
+}
+
+
+//  START: fetch issues when page loads
+
+document.addEventListener("DOMContentLoaded", function() {
+  fetchAllIssues();
+});
