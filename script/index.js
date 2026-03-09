@@ -18,9 +18,9 @@ function formatDate(dateString) {
 function getPriorityBadge(priority) {
   const p = (priority || "LOW").toUpperCase();
 
-  if (p === "HIGH")   return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
-  if (p === "MEDIUM") return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
-                      return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
+  if (p === "HIGH")   return `<span class="badge badge-error text-[#EF4444] bg-[#FEECEC] text-xs font-bold">HIGH</span>`;
+  if (p === "MEDIUM") return `<span class="badge badge-warning text-[#F59E0B] bg-[#FFF6D1] text-xs font-bold">MEDIUM</span>`;
+                      return `<span class="badge badge-ghost text-[#9CA3AF] bg-[#EEEFF2] text-xs font-bold">LOW</span>`;
 }
 
 
@@ -98,24 +98,24 @@ function createCard(issue) {
   card.innerHTML = `
     <div class="p-4 flex flex-col gap-3 flex-1">
 
-      <!-- Status icon + Priority badge -->
+    
       <div class="flex items-center justify-between">
         ${statusIcon}
         ${getPriorityBadge(prio)}
       </div>
 
-      <!-- Title -->
+      
       <p class="font-bold text-sm text-gray-800 leading-snug">${title}</p>
 
-      <!-- Description (only 2 lines shown) -->
+      
       <p class="text-xs text-gray-400 leading-relaxed line-clamp-2">${desc}</p>
 
-      <!-- Label badges -->
+
       <div class="flex flex-wrap gap-1">${labelsHTML}</div>
 
     </div>
 
-    <!-- Footer -->
+    
     <div class="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
       <p>#${id} by <span class="font-semibold text-gray-700">${author}</span></p>
       <p>${date}</p>
