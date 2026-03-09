@@ -42,48 +42,6 @@ function getLabelBadge(name) {
   `;
 }
 
-  if (p === "HIGH")
-    return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
-  if (p === "MEDIUM")
-    return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
-  return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
-}
-
-//   Get a colored label badge (BUG, HELP WANTED etc.)
-//  Returns HTML string
-
-function getLabelBadge(name) {
-  const labelName = typeof name === "string" ? name : name.name || "";
-  const l = labelName.toLowerCase();
-
-  let colorClass = "badge-ghost";
-  let icon = "fa-tag";
-
-  if (l.includes("bug")) {
-    colorClass = "badge-error";
-    icon = "fa-bug";
-  }
-  if (l.includes("help")) {
-    colorClass = "badge-warning";
-    icon = "fa-hand";
-  }
-  if (l.includes("enhan")) {
-    colorClass = "badge-success";
-    icon = "fa-star";
-  }
-  if (l.includes("feat")) {
-    colorClass = "badge-info";
-    icon = "fa-rocket";
-  }
-
-  return `
-    <span class="badge ${colorClass} text-xs font-semibold gap-1">
-      <i class="fa-solid ${icon} text-[9px]"></i>
-      ${labelName.toUpperCase()}
-    </span>
-  `;
-}
-
 //  SHOW the loading spinner, HIDE the cards
 
 function showSpinner() {
@@ -99,18 +57,6 @@ function hideSpinner() {
   document.getElementById("cards-grid").style.display = "grid";
 }
 
-//  SHOW the loading spinner, HIDE the cards
-
-function showSpinner() {
-  document.getElementById("spinner").style.display = "flex";
-  document.getElementById("cards-grid").style.display = "none";
-}
-
-//  HIDE the loading spinner, SHOW the cards
-function hideSpinner() {
-  document.getElementById("spinner").style.display = "none";
-  document.getElementById("cards-grid").style.display = "grid";
-}
 
 //  CREATE ONE CARD for a single issue
 //  Returns a <div> element
@@ -261,4 +207,72 @@ function fetchSingleIssue(id) {
     .catch(function(err) {
       console.warn("Could not fetch full issue details:", err);
     });
+}
+
+
+//  OPEN THE MODAL when a card is clicked
+
+function openModal(issue) {
+  // Fill modal with card data right away
+  fillModal(issue);
+
+  // Show the DaisyUI modal
+  document.getElementById("issue-modal").showModal();
+
+  // Also fetch full details from the API
+  const id = issue.id;
+  if (id) fetchSingleIssue(id);
+}
+
+
+//  CLOSE THE MODAL
+
+function closeModal() {
+  document.getElementById("issue-modal").close();
+}
+
+//  FILL THE MODAL with issue data
+
+function fillModal(issue) {
+  const status   = (issue.status || "open").toLowerCase();
+  const title    = issue.title;
+  const desc     = issue.description;
+  const author   = issue.author || issue.createdBy || "Unknown";
+  const assignee = issue.assignee || author;
+  const priority = issue.priority || "LOW";
+  const date     = formatDate(issue.createdAt);
+  const labels   = issue.labels || [];
+
+  // Title
+  document.getElementById("modal-title").textContent = title;
+
+  // Status badge
+  const statusEl = document.getElementById("modal-status");
+  if (status === "open") {
+    statusEl.className = "badge badge-success text-white font-semibold";
+    statusEl.innerHTML = `<i class="fa-solid fa-circle-dot mr-1"></i> Opened`;
+  } else {
+    statusEl.className = "badge badge-secondary text-white font-semibold";
+    statusEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Closed`;
+  }
+
+  // Author + date
+  document.getElementById("modal-author").innerHTML = `<i class="fa-regular fa-user mr-1"></i> Opened by <strong>${author}</strong>`;
+  document.getElementById("modal-date").innerHTML   = `<i class="fa-regular fa-calendar mr-1"></i> ${date}`;
+
+  // Labels
+  const labelsEl = document.getElementById("modal-labels");
+  labelsEl.innerHTML = "";
+  labels.forEach(function(lbl) {
+    labelsEl.innerHTML += getLabelBadge(lbl);
+  });
+
+  // Description
+  document.getElementById("modal-desc").textContent = desc;
+
+  // Assignee
+  document.getElementById("modal-assignee").textContent = assignee;
+
+  // Priority
+  document.getElementById("modal-priority").innerHTML = getPriorityBadge(priority);
 }
