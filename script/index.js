@@ -14,6 +14,33 @@ function formatDate(dateString) {
 //  Get a colored priority badge
 function getPriorityBadge(priority) {
   const p = (priority || "LOW").toUpperCase();
+  if (p === "HIGH")   return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
+  if (p === "MEDIUM") return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
+                      return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
+}
+
+//   Get a colored label badge (BUG, HELP WANTED etc.)
+//  Returns HTML string
+
+function getLabelBadge(name) {
+  const labelName = typeof name === "string" ? name : (name.name || "");
+  const l = labelName.toLowerCase();
+
+  let colorClass = "badge-ghost";
+  let icon = "fa-tag";
+
+  if (l.includes("bug"))   { colorClass = "badge-error";   icon = "fa-bug"; }
+  if (l.includes("help"))  { colorClass = "badge-warning";  icon = "fa-hand"; }
+  if (l.includes("enhan")) { colorClass = "badge-success";  icon = "fa-star"; }
+  if (l.includes("feat"))  { colorClass = "badge-info";     icon = "fa-rocket"; }
+
+  return `
+    <span class="badge ${colorClass} text-xs font-semibold gap-1">
+      <i class="fa-solid ${icon} text-[9px]"></i>
+      ${labelName.toUpperCase()}
+    </span>
+  `;
+}
 
   if (p === "HIGH")
     return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
@@ -63,6 +90,7 @@ function showSpinner() {
   document.getElementById("spinner").style.display = "flex";
   document.getElementById("cards-grid").style.display = "none";
 }
+
 
 //  HIDE the loading spinner, SHOW the cards
 
@@ -147,6 +175,41 @@ function createCard(issue) {
   });
 
   return card;
+}
+
+
+//  DISPLAY ISSUES on the page
+//  Filters by currentTab, updates count, shows cards
+
+function displayIssues(issues) {
+  const grid = document.getElementById("cards-grid");
+
+  // Clear old cards
+  grid.innerHTML = "";
+
+  // Filter by active tab
+  let list = issues;
+  if (currentTab === "open")   list = issues.filter(i => (i.status || "").toLowerCase() === "open");
+  if (currentTab === "closed") list = issues.filter(i => (i.status || "").toLowerCase() === "closed");
+
+  // Update issue count text
+  document.getElementById("issue-count").textContent = `${list.length} Issues`;
+
+  // If no issues, show a message
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-full text-center py-16 text-gray-400">
+        <i class="fa-solid fa-inbox text-4xl mb-3 block"></i>
+        No ${currentTab} issues found.
+      </div>
+    `;
+    return;
+  }
+
+  // Add each issue as a card
+  list.forEach(function(issue) {
+    grid.appendChild(createCard(issue));
+  });
 }
 //  FETCH ALL ISSUES from the API
 //  Using fetch → .then → .then as required
