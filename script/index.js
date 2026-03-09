@@ -1,10 +1,8 @@
-
 // --- Store all issues here after fetching ---
 let allIssues = [];
 
 // --- Track which tab is active ---
 let currentTab = "all";
-
 
 // Turn a date string into a readable date
 
@@ -17,25 +15,39 @@ function formatDate(dateString) {
 function getPriorityBadge(priority) {
   const p = (priority || "LOW").toUpperCase();
 
-  if (p === "HIGH")   return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
-  if (p === "MEDIUM") return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
-                      return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
+  if (p === "HIGH")
+    return `<span class="badge badge-error text-white text-xs font-bold">HIGH</span>`;
+  if (p === "MEDIUM")
+    return `<span class="badge badge-warning text-white text-xs font-bold">MEDIUM</span>`;
+  return `<span class="badge badge-ghost text-xs font-bold">LOW</span>`;
 }
 
 //   Get a colored label badge (BUG, HELP WANTED etc.)
 //  Returns HTML string
 
 function getLabelBadge(name) {
-  const labelName = typeof name === "string" ? name : (name.name || "");
+  const labelName = typeof name === "string" ? name : name.name || "";
   const l = labelName.toLowerCase();
 
   let colorClass = "badge-ghost";
   let icon = "fa-tag";
 
-  if (l.includes("bug"))   { colorClass = "badge-error";   icon = "fa-bug"; }
-  if (l.includes("help"))  { colorClass = "badge-warning";  icon = "fa-hand"; }
-  if (l.includes("enhan")) { colorClass = "badge-success";  icon = "fa-star"; }
-  if (l.includes("feat"))  { colorClass = "badge-info";     icon = "fa-rocket"; }
+  if (l.includes("bug")) {
+    colorClass = "badge-error";
+    icon = "fa-bug";
+  }
+  if (l.includes("help")) {
+    colorClass = "badge-warning";
+    icon = "fa-hand";
+  }
+  if (l.includes("enhan")) {
+    colorClass = "badge-success";
+    icon = "fa-star";
+  }
+  if (l.includes("feat")) {
+    colorClass = "badge-info";
+    icon = "fa-rocket";
+  }
 
   return `
     <span class="badge ${colorClass} text-xs font-semibold gap-1">
@@ -45,15 +57,12 @@ function getLabelBadge(name) {
   `;
 }
 
-
-
 //  SHOW the loading spinner, HIDE the cards
 
 function showSpinner() {
   document.getElementById("spinner").style.display = "flex";
   document.getElementById("cards-grid").style.display = "none";
 }
-
 
 //  HIDE the loading spinner, SHOW the cards
 
@@ -62,15 +71,12 @@ function hideSpinner() {
   document.getElementById("cards-grid").style.display = "grid";
 }
 
-
 //  SHOW the loading spinner, HIDE the cards
 
 function showSpinner() {
   document.getElementById("spinner").style.display = "flex";
   document.getElementById("cards-grid").style.display = "none";
 }
-
-
 
 //  HIDE the loading spinner, SHOW the cards
 function hideSpinner() {
@@ -81,29 +87,31 @@ function hideSpinner() {
 //  CREATE ONE CARD for a single issue
 //  Returns a <div> element
 function createCard(issue) {
-  // Get values from the issue 
-  const id     = issue.id;
-  const title  = issue.title;
-  const desc   = issue.description;
+  // Get values from the issue
+  const id = issue.id;
+  const title = issue.title;
+  const desc = issue.description;
   const status = (issue.status || "open").toLowerCase();
-  const prio   = issue.priority || "LOW";
+  const prio = issue.priority || "LOW";
   const author = issue.author || issue.createdBy || "Unknown";
-  const date   = formatDate(issue.createdAt);
+  const date = formatDate(issue.createdAt);
   const labels = issue.labels || [];
 
   // Build label badges HTML
   let labelsHTML = "";
-  labels.forEach(function(lbl) {
+  labels.forEach(function (lbl) {
     labelsHTML += getLabelBadge(lbl);
   });
 
   // Top border color: green for open, purple for closed
-  const borderColor = status === "open" ? "border-t-green-500" : "border-t-purple-500";
+  const borderColor =
+    status === "open" ? "border-t-green-500" : "border-t-purple-500";
 
   // Status icon
-  const statusIcon = status === "open"
-    ? `<i class="fa-solid fa-circle-dot text-green-500"></i>`
-    : `<i class="fa-solid fa-circle-check text-purple-500"></i>`;
+  const statusIcon =
+    status === "open"
+      ? `<i class="fa-solid fa-circle-dot text-green-500"></i>`
+      : `<i class="fa-solid fa-circle-check text-purple-500"></i>`;
 
   // Create the card element
   const card = document.createElement("div");
@@ -134,10 +142,60 @@ function createCard(issue) {
   `;
 
   // When card is clicked → open the modal
-  card.addEventListener("click", function() {
+  card.addEventListener("click", function () {
     openModal(issue);
   });
 
   return card;
 }
+//  FETCH ALL ISSUES from the API
+//  Using fetch → .then → .then as required
+function fetchAllIssues() {
+  showSpinner();
 
+  fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues")
+
+    // First .then: check response is OK, then parse JSON
+    .then(function(response) {
+      if (!response.ok) throw new Error("Failed to load issues");
+      return response.json();
+    })
+
+    // Second .then: we now have the data!
+    .then(function(data) {
+      // Handle different API response shapes
+      if (Array.isArray(data))  allIssues = data;
+      else if (data.issues)     allIssues = data.issues;
+      else if (data.data)       allIssues = data.data;
+      else                      allIssues = [];
+
+      hideSpinner();
+      displayIssues(allIssues);
+    })
+
+    // If something goes wrong
+    .catch(function(error) {
+      console.error(error);
+      hideSpinner();
+      document.getElementById("cards-grid").innerHTML = `
+        <div class="col-span-full text-center py-16 text-red-400">
+          <i class="fa-solid fa-triangle-exclamation text-3xl mb-3 block"></i>
+          Could not load issues. Please try again.
+        </div>
+      `;
+    });
+}
+
+
+//  FETCH ONE ISSUE by ID (for the modal)
+function fetchSingleIssue(id) {
+  fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      const issue = data.issue || data.data || data;
+      fillModal(issue);
+    })
+    .catch(function(err) {
+      console.warn("Could not fetch full issue details:", err);
+    });
+}
